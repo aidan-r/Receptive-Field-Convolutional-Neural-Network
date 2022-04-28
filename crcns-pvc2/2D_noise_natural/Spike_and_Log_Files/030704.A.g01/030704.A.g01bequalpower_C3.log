@@ -1,0 +1,81 @@
+[FileInfo]
+FileType                      f21lv test log file
+FileVersion                   2.0
+FileVersionExt                2.1
+FileName                      030704.A.g01bequalpower_C3.log
+FileCreator                   f21mlv.vi
+FileTime                      7/3/2003 23:59:8
+
+[TestInfo]
+TestType                      normal
+Testname                      A.g01bsequence_C1
+RemoteRefreshRate             119.426905
+RefreshRate                   119.428771
+FrameRateFactor               5
+FrameRate                     23.885754
+
+[TunningCurve]
+TCMode                        Ori_CRF_Standard
+CRFShowType                   bar
+OriX                          -5.500000
+OriY                          -1.375000
+GratingsW                     15.422108
+GratingsH                     26.908685
+GratingsSpatialFrequency      0.250000
+GratingsTemporalFrequency     1.189207
+CRFSize                       13.454343
+CRFDirection                  170.000000
+CRFContrast                   1.000000
+nCRFRatio                     2.090508
+nCRFSize                      28.126408
+nCRFDirection                 225.000000
+nCRFContrast                  1.000000
+OuterDirection                0.000000
+SingleTestTime                3
+Interval                      1
+DataPoints                    24
+Repeats                       1
+DirectionList                 10 330.000000 345.000000 0.000000 15.000000 30.000000 150.000000 165.000000 180.000000 195.000000 210.000000
+SpatialList                   17 0.031250 0.044200 0.050000 0.062500 0.070000 0.088400 0.100000 0.125000 0.140000 0.160000 0.177000 0.200000 0.220000 0.250000 0.300000 0.354000 0.500000
+TemporalList                  8 0.031250 0.062500 0.125000 0.250000 0.500000 1.000000 2.000000 4.000000
+TestSequence                  24 21 22 3 16 14 1 9 15 8 12 2 7 23 11 6 0 17 5 19 13 20 10 4 18
+TestValueSequence             24 315.00000 330.00000 45.00000 240.00000 210.00000 15.00000 135.00000 225.00000 120.00000 180.00000 30.00000 105.00000 345.00000 165.00000 90.00000 0.00000 255.00000 75.00000 285.00000 195.00000 300.00000 150.00000 60.00000 270.00000
+
+[Stimulus]
+StiName                       f21surround
+StiX                          3.200000
+StiY                          2.300000
+StiW                          18.300000
+StiH                          18.300000
+Direction                     40.000000
+Orientaion                    0.000000
+SpatialFreq                   0.500000
+TemporalFreq                  1.000000
+Contrast                      100.000000
+SurroundSize                  29.000000
+BorderWidth                   1.000000
+ProtocolName                  Protocol: Center Only
+ProtocolNum                   1
+AlternateFrames               3000
+AltOrientation                0.000000
+AltSpatialFreq                0.500000
+AltContrast                   100.000000
+MovieList                     1 Equalpower_C3_25hz.mv
+
+[DAQ]
+SampleRate                    10000
+NumOfChannels                 1
+ElectrodeMode                 single
+
+[HowIsFinished]
+FinishedStatus                finished
+
+[DataFile]
+LogFile                       030703.A.g01bsequence_C1.log
+Ra1File                       030703.A.g01bsequence_C1.ra1        1963912           35991
+SpikeFilea0                   030703.A.g01bsequence_C1.sa0        62388             15390
+
+[Misc]
+Journal                       7/3/2003 23:42:6
+
+
