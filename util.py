@@ -8,6 +8,9 @@ Created on Fri Mar  4 12:41:09 2022
 import numpy as np
 import scipy.io
 import matplotlib.pyplot as plt
+from skimage.metrics import structural_similarity as ssim
+from skimage.metrics import mean_squared_error as mse
+from skimage.metrics import normalized_root_mse as nrmse
 
 
 #--------------------------------------
@@ -54,10 +57,11 @@ def print_spike_triggered_average(spike_times,stim,frames_back=10,plot=False):
     
     sta_show = np.mean(sta,axis=2)
     if plot:
-        plt.figure(figsize=(15,15))
+        plt.figure(figsize=(15,17))
+        plt.tight_layout()
         for i in range(nframes):
             plt.subplot(5,5,i+1)
-            plt.title('%s seconds Before Spike'%((nframes- i) / 24))
+            plt.title('%s seconds Before Spike'%(round((nframes- i) / 24,2)))
             plt.imshow(sta_show[:,:,i],cmap='gray')
     return sta_show
 
@@ -76,11 +80,19 @@ def load_neuron(index,fname,neuron_path):
     spikes = spikes.transpose()
     print(data[index]['name'])
     #
-    stim_name = data[index]['name'][0][0][13:23].capitalize()
-    stim_num = data[index]['name'][0][0][-6:-4].capitalize()
+    
+    try:
+        stim_name = data[index]['name'][0][0][13:23].capitalize()
+        stim_num = data[index]['name'][0][0][-6:-4].capitalize()
+        path = neuron_path + '%s_%s_25hz.mat'%(stim_name,stim_num)
+        stim = load_and_print_stim(path)
+    except:
+        stim_name = data[index]['name'][0][0][13:24].capitalize()
+        stim_num = data[index]['name'][0][0][-6:-4].capitalize()
+        path = neuron_path + '%s_%s_25hz.mat'%(stim_name,stim_num)
+        stim = load_and_print_stim(path)
 
-    path = neuron_path + '%s_%s_25hz.mat'%(stim_name,stim_num)
-    stim = load_and_print_stim(path)
+
     # sta = print_spike_triggered_average(spikes, stim)
     return spikes,stim
 
@@ -92,7 +104,7 @@ def isi_mean(spikes,plot=False):
     if plot:
         plt.figure()
         plt.title('Interspike Interval')
-        plt.hist(isi)
+        plt.hist(isi,bins=20)
         plt.xlabel('Time')
         plt.ylabel('Counts')
         print('Mean ISI is %s'%(mean))
@@ -101,7 +113,10 @@ def isi_mean(spikes,plot=False):
     return mean
 
 #--------------------------------------  
-def similarity_vs_firing_rate(spikes,stim,tau,plot=False):
+def similarity_vs_firing_rate(spikes,stim,tau=None,plot=False):
+    if tau == None:
+        tau = int(isi_mean(spikes) * 10)
+    
     #This will return a list of the similarity between a stimulus and spike triggered average
     ssim_save = np.zeros(shape=(stim.shape[2],))
     
@@ -116,7 +131,7 @@ def similarity_vs_firing_rate(spikes,stim,tau,plot=False):
     for i in range(stim.shape[2]):
         time_start = find_nearest(spikes,int((i / 24) / (1e-4)))
         time_stop = find_nearest(spikes,int((i/24) / (1e-4)) + tau)
-        rate = spikes[time_start:time_stop].shape[0]/ tau
+        rate = spikes[time_start:time_stop].shape[0]
         rate_save[i] = rate
         
     if plot:
@@ -125,7 +140,7 @@ def similarity_vs_firing_rate(spikes,stim,tau,plot=False):
         plt.scatter(ssim_save,rate_save,alpha=0.5)
         plt.xlabel('Similarity to STA')
         plt.ylabel('Firing Rate')
-        
+        plt.show()
         
 #--------------------------------------          
 def compare_jitter(spikes,stim):
@@ -141,7 +156,8 @@ def compare_jitter(spikes,stim):
 #--------------------------------------  
 def return_firing_rate(spikes,stim,tau=None,plot=False):
     if tau == None:
-        tau = int(isi_mean(spikes) * 5)
+        tau = int(isi_mean(spikes) * 10)
+        print(tau)
 
 
     rate_save = np.zeros(shape=(stim.shape[2],))
@@ -149,7 +165,9 @@ def return_firing_rate(spikes,stim,tau=None,plot=False):
     for i in range(stim.shape[2]):
         time_start = find_nearest(spikes,int((i / 24) / (1e-4)))
         time_stop = find_nearest(spikes,int((i/24) / (1e-4)) + tau)
-        rate = spikes[time_start:time_stop].shape[0]/ tau
+        rate = spikes[time_start:time_stop].shape[0]
+        
+        #could divid by tau here
         rate_save[i] = rate
     
     if plot:
@@ -157,3 +175,63 @@ def return_firing_rate(spikes,stim,tau=None,plot=False):
         plt.title('Firing Rate vs Time')
         plt.plot(np.linspace(1,rate_save.shape[0],rate_save.shape[0]),rate_save)
     return rate_save
+
+#-------------------------------------- 
+def similarity_vs_firing_rate_mse(spikes,stim,tau=None,plot=False):
+    if tau == None:
+        tau = int(isi_mean(spikes) * 10)
+    
+    #This will return a list of the similarity between a stimulus and spike triggered average
+    mse_save = np.zeros(shape=(stim.shape[2],))
+    
+    sta = print_spike_triggered_average(spikes, stim,plot=False)
+    
+    for i in range(stim.shape[2]):
+        mse_save[i] = mse(stim[:,:,i],sta[:,:,-1])
+    
+    rate_save = np.zeros(shape=(stim.shape[2],))
+    
+    #This will calc the similarity vs firing rate
+    for i in range(stim.shape[2]):
+        time_start = find_nearest(spikes,int((i / 24) / (1e-4)))
+        time_stop = find_nearest(spikes,int((i/24) / (1e-4)) + tau)
+        rate = spikes[time_start:time_stop].shape[0]
+        rate_save[i] = rate
+        
+    if plot:
+        plt.figure()
+        plt.title('Similarity vs Firing Rate')
+        plt.scatter(mse_save,rate_save,alpha=0.5)
+        plt.xlabel('Similarity to STA')
+        plt.ylabel('Firing Rate')
+        plt.show()
+        
+#-------------------------------------- 
+def similarity_vs_firing_rate_nrmse(spikes,stim,tau=None,plot=False):
+    if tau == None:
+        tau = int(isi_mean(spikes) * 10)
+    
+    #This will return a list of the similarity between a stimulus and spike triggered average
+    nrmse_save = np.zeros(shape=(stim.shape[2],))
+    
+    sta = print_spike_triggered_average(spikes, stim,plot=False)
+    
+    for i in range(stim.shape[2]):
+        nrmse_save[i] = nrmse(stim[:,:,i],sta[:,:,-1])
+    
+    rate_save = np.zeros(shape=(stim.shape[2],))
+    
+    #This will calc the similarity vs firing rate
+    for i in range(stim.shape[2]):
+        time_start = find_nearest(spikes,int((i / 24) / (1e-4)))
+        time_stop = find_nearest(spikes,int((i/24) / (1e-4)) + tau)
+        rate = spikes[time_start:time_stop].shape[0]
+        rate_save[i] = rate
+        
+    if plot:
+        plt.figure()
+        plt.title('Similarity vs Firing Rate')
+        plt.scatter(nrmse_save,rate_save,alpha=0.5)
+        plt.xlabel('Normalized Erro Input vs STA')
+        plt.ylabel('Firing Rate')
+        plt.show()
