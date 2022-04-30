@@ -9,6 +9,8 @@ Created on Tue Mar 22 14:02:24 2022
 import pandas as pd
 import numpy as np
 import util
+import modeling_data_processing
+
 
 #%%
 neuron_path = 'C:/Users/aidan/Desktop/grad/Neuro/Receptive-Field-Convolutional-Neural-Network/crcns-pvc2/2D_noise_natural/Stimulus_Files/'

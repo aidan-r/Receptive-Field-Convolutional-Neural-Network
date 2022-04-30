@@ -17,11 +17,11 @@ import sklearn
 #%%Load Data
 
 #Change these to the respective paths
-neuron_path = 'C:/Users/aidan/Desktop/grad/Neuro/Receptive-Field-Convolutional-Neural-Network/crcns-pvc2/2D_noise_natural/Stimulus_Files/'
-fname = 'C:/Users/aidan/Desktop/grad/Neuro/Receptive-Field-Convolutional-Neural-Network/data/all_spike_files_2D_noise_natural.mat'
+neuron_path = 'C:/Users/aidan/OneDrive/Desktop/grad courses/neuro/Receptive-Field-Convolutional-Neural-Network/crcns-pvc2/2D_noise_natural/Stimulus_Files/'
+fname = 'C:/Users/aidan/OneDrive/Desktop/grad courses/neuro/Receptive-Field-Convolutional-Neural-Network/data/all_spike_files_2D_noise_natural.mat'
 
 #Load the Data, X is the input image, y is the output firing rate
-(spikes,X) = util.load_neuron(40,fname,neuron_path)
+(spikes,X) = util.load_neuron(88,fname,neuron_path)
 
 y = util.return_firing_rate(spikes,X,plot=True)
 
@@ -49,16 +49,17 @@ X_train,X_test,y_train,y_test = train_test_split(X,y,test_size=0.33)
 X_train = X_train.reshape(X_train.shape[0],12,12)
 X_test = X_test.reshape(X_test.shape[0],12,12)
 
+nkerns = 4
 
 model = tf.keras.Sequential()
 
-model.add(tf.keras.layers.Conv2D(filters=1,kernel_size = (12,12),input_shape=(12,12,1),activation='relu',name='conv'))
+model.add(tf.keras.layers.Conv2D(filters=nkerns,kernel_size = (12,12),input_shape=(12,12,1),activation='relu',name='conv'))
 # model.add(tf.keras.layers.GlobalMaxPooling2D())
 # model.add(keras.layers.Dense())
-model.add(keras.layers.Dense(8,activation=keras.activations.relu))
-model.add(keras.layers.Dense(8,activation = keras.activations.relu))
+model.add(keras.layers.Dense(16,activation=keras.activations.relu))
+model.add(keras.layers.Dense(16,activation = keras.activations.relu))
 model.add(keras.layers.BatchNormalization())
-model.add(keras.layers.Dense(4,activation=keras.activations.relu))
+model.add(keras.layers.Dense(8,activation=keras.activations.relu))
 model.add(keras.layers.Dense(1,activation=keras.activations.relu,use_bias=True))
 
 model.compile(tf.keras.optimizers.Adam(learning_rate=0.01),loss = tf.keras.losses.Poisson())
@@ -81,9 +82,13 @@ plt.ylabel('Predicted Firing Rates')
 
 
 
-predicted_sta = np.array(model.weights[0])
-predicted_sta = predicted_sta.squeeze()
-print(predicted_sta.shape)
 
-plt.figure()
-plt.imshow(predicted_sta,cmap='binary')
+
+for i in range(nkerns):
+    
+    plt.figure()
+    predicted_sta = np.array(model.weights[0][:,:,:,i])
+    predicted_sta = predicted_sta.squeeze()
+    print(predicted_sta.shape)
+    plt.imshow(predicted_sta,cmap='binary')
+    plt.show()

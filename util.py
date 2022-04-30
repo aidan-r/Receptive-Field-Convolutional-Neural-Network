@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 """
-Created on Fri Mar  4 12:41:09 2022
+<<<<<<< HEAD
+Created on Thu Jan 27 16:01:06 2022
+
+Useful functions for processing data
 
 @author: aidan
 """
@@ -35,7 +38,7 @@ def load_and_print_stim(path,num_frames = 5,plot=False):
     return stim
 
 #--------------------------------------  
-def print_spike_triggered_average(spike_times,stim,frames_back=10,plot=False):
+def print_spike_triggered_average(spike_times,stim,frames_back=10,plot=False,idx=None):
     
     nframes = frames_back
 
@@ -57,12 +60,16 @@ def print_spike_triggered_average(spike_times,stim,frames_back=10,plot=False):
     
     sta_show = np.mean(sta,axis=2)
     if plot:
+        
         plt.figure(figsize=(15,17))
+        if idx is not None:
+            plt.suptitle('Neuron %s'%(idx))
         plt.tight_layout()
         for i in range(nframes):
             plt.subplot(5,5,i+1)
             plt.title('%s seconds Before Spike'%(round((nframes- i) / 24,2)))
             plt.imshow(sta_show[:,:,i],cmap='gray')
+        plt.show()
     return sta_show
 
 #--------------------------------------  
@@ -176,6 +183,7 @@ def return_firing_rate(spikes,stim,tau=None,plot=False):
         plt.plot(np.linspace(1,rate_save.shape[0],rate_save.shape[0]),rate_save)
     return rate_save
 
+
 #-------------------------------------- 
 def similarity_vs_firing_rate_mse(spikes,stim,tau=None,plot=False):
     if tau == None:
@@ -235,3 +243,4 @@ def similarity_vs_firing_rate_nrmse(spikes,stim,tau=None,plot=False):
         plt.xlabel('Normalized Erro Input vs STA')
         plt.ylabel('Firing Rate')
         plt.show()
+
