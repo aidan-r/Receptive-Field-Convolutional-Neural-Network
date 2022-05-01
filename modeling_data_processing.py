@@ -16,14 +16,18 @@ from skimage.metrics import normalized_root_mse as nrmse
 
 
 #%%
-path = 'C:/Users/aidan/OneDrive/Desktop/grad courses/neuro/Receptive-Field-Convolutional-Neural-Network/data/2022_04_29_Noise_45deg_120s.mat'
-model_data = scipy.io.loadmat(path)
+#path = 'C:/Users/aidan/Desktop/grad/Neuro/Receptive-Field-Convolutional-Neural-Network/data/2022_04_29_Noise_45deg_120s_3.mat'
+# path = 'C:/Users/aidan/Desktop/grad/Neuro/Receptive-Field-Convolutional-Neural-Network/data/2022_04_30_Compex_Noise_45+90deg_120s.mat'
+# model_data = scipy.io.loadmat(path)
 
-print(model_data.keys())
+# print(model_data.keys())
 
+# model_data.keys()
 #%%
-print(model_data['simple_model_output'][0][0][7])
-print(model_data['simple_model_output'][0][0][7].shape)
+# print(model_data['model_output'][0][0][6])
+# print(sum(model_data['model_output'][0][0][6][0,:]))
+
+
 
 #%%[0]
 # print(model_data.keys())
@@ -31,9 +35,9 @@ print(model_data['simple_model_output'][0][0][7].shape)
 # print(type(model_data['simple_model_output'][0][0][6]))
 # print(model_data['simple_model_output'][0][0][6].shape)
 
-stim = model_data['simple_model_output'][0][0][3]
-spikes = model_data['simple_model_output'][0][0][7][0,:]
-spikes = spikes[:120000]
+# stim = model_data['model_output'][0][0][2]
+# spikes = model_data['model_output'][0][0][6][0,:]
+# spikes = spikes[:120000]
 
 
 #%%
@@ -66,7 +70,7 @@ def model_sta(spikes,stim,plot=True):
         
     return sta_calc
 
-sta_calc = model_sta(spikes,stim)
+# sta_calc = model_sta(spikes,stim)
 
 #%%
 def isi_mean(spikes,plot=False):
@@ -86,7 +90,7 @@ def isi_mean(spikes,plot=False):
 
     return mean
 
-isi_mean(spikes,plot=True)
+# isi_mean(spikes,plot=True)
 
 def find_nearest(array,value,out='index'):
     idx = (np.abs(array-value)).argmin()
@@ -132,14 +136,14 @@ def similarity_vs_firing_rate(spikes,stim,sta,metric,tau=None,plot=False):
         plt.show()
         
         
-similarity_vs_firing_rate(spikes, stim, sta_calc, mse,plot=True)
-similarity_vs_firing_rate(spikes, stim, sta_calc, nrmse,plot=True)
-similarity_vs_firing_rate(spikes, stim, sta_calc, ssim,plot=True) 
+# similarity_vs_firing_rate(spikes, stim, sta_calc, mse,plot=True)
+# similarity_vs_firing_rate(spikes, stim, sta_calc, nrmse,plot=True)
+# similarity_vs_firing_rate(spikes, stim, sta_calc, ssim,plot=True) 
 
 
 #%%Firing rate model data
 
-def return_firing_rate(spikes,tau=None):
+def return_firing_rate(spikes,stim,tau=None):
     if tau is None:
         tau = int(isi_mean(spikes) * 150)
         
